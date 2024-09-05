@@ -39,6 +39,7 @@ const MultiSelect = ({
 
 function DynamicDropdowns() {
   const [data, setData] = useState([]);
+  const [inputText, setInputText] = useState(""); // State for text input (ID)
   const [selectedOptions, setSelectedOptions] = useState({
     L_1: [],
     L_2: [],
@@ -47,6 +48,8 @@ function DynamicDropdowns() {
     L_5: [],
     L_6: [],
   });
+  const [combinations, setCombinations] = useState([]); // Array to hold the added combinations
+  const [counter, setCounter] = useState(0); // Counter for added combinations
 
   // Function to handle file upload and parse Excel file
   const handleFileUpload = (event) => {
@@ -98,10 +101,62 @@ function DynamicDropdowns() {
     });
   };
 
+  // Add combination to the array
+  const handleAdd = () => {
+    const newCombination = {
+      ID: inputText,
+      L_1: selectedOptions.L_1.length > 0 ? selectedOptions.L_1 : [null],
+      L_2: selectedOptions.L_2.length > 0 ? selectedOptions.L_2 : [null],
+      L_3: selectedOptions.L_3.length > 0 ? selectedOptions.L_3 : [null],
+      L_4: selectedOptions.L_4.length > 0 ? selectedOptions.L_4 : [null],
+      L_5: selectedOptions.L_5.length > 0 ? selectedOptions.L_5 : [null],
+      L_6: selectedOptions.L_6.length > 0 ? selectedOptions.L_6 : [null],
+    };
+
+    setCombinations((prev) => [...prev, newCombination]);
+    setCounter((prev) => prev + 1); // Update counter
+    setInputText(""); // Reset text input
+    setSelectedOptions({
+      L_1: [],
+      L_2: [],
+      L_3: [],
+      L_4: [],
+      L_5: [],
+      L_6: [],
+    }); // Reset dropdown selections
+  };
+
+  // Save combinations to a JSONL file and download it
+  const handleSave = () => {
+    const jsonlContent = combinations
+      .map((combo) => JSON.stringify(combo))
+      .join("\n");
+    const blob = new Blob([jsonlContent], { type: "application/jsonl" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "combinations.jsonl";
+    link.click();
+
+    // Reset combinations and counter after saving
+    setCombinations([]);
+    setCounter(0);
+  };
+
   return (
     <div>
       <h3>Upload Excel File</h3>
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+
+      {/* Text Input Field */}
+      <div>
+        <label>Text Input (ID)</label>
+        <input
+          type="text"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Enter some text here"
+        />
+      </div>
 
       {/* MultiSelect for L_1 with max 2 options */}
       <MultiSelect
@@ -192,6 +247,17 @@ function DynamicDropdowns() {
         isDisabled={!selectedOptions.L_5.length}
         maxOptions={3}
       />
+
+      {/* Add Button */}
+      <button onClick={handleAdd}>Add</button>
+
+      {/* Save Button */}
+      <button onClick={handleSave}>Save</button>
+
+      {/* Counter */}
+      <div>
+        <p>Number of combinations: {counter}</p>
+      </div>
     </div>
   );
 }
