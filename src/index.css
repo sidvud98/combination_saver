@@ -11,3 +11,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#react-select-3-listbox{
+  >div{
+    color: black
+  }
+}
+#react-select-5-listbox{
+  >div{
+    color: black
+  }
+}
+#react-select-7-listbox{
+  >div{
+    color: black
+  }
+}
+#react-select-9-listbox{
+  >div{
+    color: black
+  }
+}
+#react-select-11-listbox{
+  >div{
+    color: black
+  }
+}
+#react-select-13-listbox{
+  >div{
+    color: black
+  }
+}
